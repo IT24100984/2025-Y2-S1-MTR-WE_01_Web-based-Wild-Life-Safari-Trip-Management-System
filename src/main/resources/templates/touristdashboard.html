@@ -1,0 +1,1583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: url("../static/tourist.png") no-repeat center center/cover; /* Replace with your image */
+            min-height: 150vh;
+            color: #333;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: -1;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .navbar .back {
+            font-size: 20px;
+            text-decoration: none;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 1px solid rgba(226, 232, 240, 0.5);
+        }
+
+        .navbar .back:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .account-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .account-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .account-icon:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
+            min-width: 180px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            z-index: 2;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow: hidden;
+        }
+
+        .dropdown-content a {
+            padding: 15px 20px;
+            display: block;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.3);
+            font-weight: 500;
+        }
+
+        .dropdown-content a:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-content a:hover {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .account-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Unified Section */
+        .tour-section {
+            width: 70%;
+            margin: 30px auto;
+            background: rgba(255,255,255,0.95);
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .tour-section h1 {
+            font-family: 'Merriweather', serif;
+            font-size: 32px;
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        .tour-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        .user-icon {
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #555;
+        }
+
+        /* Assigned guide/driver aligned with special instructions */
+        .assigned-person {
+            text-align: left;
+            margin: 10px auto;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            width: 80%;
+            box-sizing: border-box;
+        }
+
+        .assigned-person h3 {
+            margin: 0 0 5px 0;
+            font-size: 18px;
+            color: #222;
+        }
+
+        .assigned-person p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Special Instructions */
+        .special-instructions-wrapper {
+            width: 80%;
+            margin: 0 auto 25px auto;
+            text-align: left;
+        }
+
+        .special-instructions-wrapper label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #222;
+        }
+
+        .special-instructions {
+            position: relative;
+            width: 100%;
+        }
+
+        .special-instructions textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+            min-height: 80px;
+        }
+
+        .special-instructions button {
+            position: absolute;
+            bottom: 8px; /* Matches previous adjustment for bottom border */
+            right: 2px;  /* Reduced to bring button closer to right border */
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .action-buttons button {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .pay-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .status-pending {
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .status-confirmed {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .status-cancelled {
+            color: #f44336;
+            font-weight: bold;
+        }
+
+        .tour-card {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .tour-actions {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        #toursContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .tour-actions button {
+            margin-right: 10px;
+        }
+
+        /* Enhanced Special Instructions Styling */
+        .special-instructions-wrapper {
+            margin: 15px auto;
+            text-align: center;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .special-instructions-wrapper label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .special-instructions {
+            position: relative;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .special-instructions textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            resize: vertical;
+            box-sizing: border-box;
+            min-height: 80px;
+            background: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .special-instructions textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .special-instructions textarea[readonly] {
+            background: #f9f9f9;
+            cursor: default;
+        }
+
+        .special-instructions button {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: none;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .special-instructions button:hover {
+            background: #1976D2;
+            transform: translateY(-1px);
+        }
+
+        .special-instructions button:active {
+            transform: translateY(0);
+        }
+
+        /* Account Details Section */
+        .account-details-section {
+            width: 70%;
+            margin: 30px auto;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .account-details-section h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #222;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .account-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .account-field {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.5);
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .account-field:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        .account-field label {
+            font-weight: 600;
+            color: #333;
+            min-width: 120px;
+            text-align: left;
+        }
+
+        .account-field span {
+            color: #555;
+            font-weight: 500;
+        }
+
+        .account-field input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            background: white;
+        }
+
+        .account-field input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .edit-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            background: #2196F3;
+            color: white;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn:hover {
+            background: #1976D2;
+            transform: translateY(-1px);
+        }
+
+        .edit-btn:active {
+            transform: translateY(0);
+        }
+
+        .save-btn {
+            background: #4CAF50;
+        }
+
+        .save-btn:hover {
+            background: #45a049;
+        }
+
+        .cancel-btn {
+            background: #f44336;
+        }
+
+        .cancel-btn:hover {
+            background: #d32f2f;
+        }
+
+        /* Review Form Styles */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .popup h3 {
+            font-family: 'Merriweather', serif;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #222;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .stars-input {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .stars-input .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .stars-input .star:hover,
+        .stars-input .star.active {
+            color: #ffd700;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+
+        /* My Reviews Section */
+        .my-reviews-section {
+            width: 70%;
+            margin: 30px auto;
+            background: rgba(255,255,255,0.95);
+            padding: 30px 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-sizing: border-box;
+            text-align: center;
+        }
+
+        .my-reviews-section h2 {
+            font-family: 'Merriweather', serif;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #222;
+        }
+
+        .my-review-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            margin: 15px 0;
+            text-align: left;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .my-review-card h4 {
+            margin: 0 0 10px 0;
+            color: #222;
+            font-size: 18px;
+        }
+
+        .my-review-card .review-stars {
+            color: #ffd700;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .my-review-card .review-text {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .my-review-card .review-date {
+            color: #888;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        .my-review-card .review-actions {
+            margin-top: 15px;
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .my-review-card .edit-btn, .my-review-card .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .my-review-card .edit-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .my-review-card .edit-btn:hover {
+            background: #1976D2;
+            transform: translateY(-1px);
+        }
+
+        .my-review-card .delete-btn {
+            background: #f44336;
+            color: white;
+        }
+
+        .my-review-card .delete-btn:hover {
+            background: #d32f2f;
+            transform: translateY(-1px);
+        }
+
+        .my-review-card .save-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .my-review-card .save-btn:hover {
+            background: #45a049;
+        }
+
+        .my-review-card .cancel-edit-btn {
+            background: #ff9800;
+            color: white;
+        }
+
+        .my-review-card .cancel-edit-btn:hover {
+            background: #f57c00;
+        }
+
+        .my-review-card .review-content {
+            margin-bottom: 10px;
+        }
+
+        .my-review-card .review-text {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .my-review-card .review-text.editable {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 8px;
+            background: #f9f9f9;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            width: 100%;
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .my-review-card .review-text.editable:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .my-review-card .stars-editable {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .my-review-card .stars-editable .star {
+            font-size: 20px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .my-review-card .stars-editable .star:hover,
+        .my-review-card .stars-editable .star.active {
+            color: #ffd700;
+        }
+
+        .no-my-reviews {
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <a href="/home" class="back">← Home</a>
+    <div class="account-dropdown">
+        <div class="account-icon">T</div>
+        <div class="dropdown-content">
+            <a href="#" onclick="toggleEditMode()">Edit Account</a>
+            <a href="#" onclick="showAddReviewForm()" style="color: #9b59b6;">Add Review</a>
+            <a href="#" onclick="deleteAccount()" style="color: #f44336;">Delete Account</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+</div>
+
+<!-- Account Details Section -->
+<div class="account-details-section">
+    <h2>Account Details</h2>
+    <div class="account-info">
+        <div class="account-field">
+            <label>Username:</label>
+            <span id="account-username">Loading...</span>
+        </div>
+        <div class="account-field editable" id="contact-field" style="display: none;">
+            <label>Contact Number:</label>
+            <input type="text" id="account-contact" value="Loading..." readonly>
+            <button onclick="editField('contact')" class="edit-btn">Edit</button>
+        </div>
+        <div class="account-field editable" id="email-field" style="display: none;">
+            <label>Email:</label>
+            <input type="email" id="account-email" value="Loading..." readonly>
+            <button onclick="editField('email')" class="edit-btn">Edit</button>
+        </div>
+    </div>
+</div>
+
+<!-- Unified Tour Section -->
+<div class="tour-section">
+    <h1>Your tour has been approved!</h1>
+
+    <!-- Trip Info -->
+    <div class="tour-info" id="tourInfo">
+        <div><strong>Trip:</strong> <span id="tourName">Loading...</span></div>
+        <div><strong>Date:</strong> <span id="tourDate">Loading...</span></div>
+        <div class="user-icon"><span>👤</span><span id="numberOfPeople">Loading...</span></div>
+    </div>
+
+    <!-- Assigned Guide -->
+    <div class="assigned-person" id="guideInfo" style="display: none;">
+        <h3>Assigned Guide: <span id="guideName">Loading...</span></h3>
+        <p id="guideDescription">Loading guide information...</p>
+    </div>
+
+    <!-- Assigned Driver -->
+    <div class="assigned-person" id="driverInfo" style="display: none;">
+        <h3>Assigned Driver: <span id="driverName">Loading...</span></h3>
+        <p id="driverDescription">Loading driver information...</p>
+    </div>
+
+    <!-- Special Instructions -->
+    <div class="special-instructions-wrapper">
+        <label for="instructions">Special Instructions:</label>
+        <div class="special-instructions">
+            <textarea id="instructions" rows="3" readonly>Loading instructions...</textarea>
+            <button onclick="editInstructions()">Edit</button>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+        <button class="cancel-btn" onclick="cancelTour()">Delete</button>
+        <button class="pay-btn" onclick="payNow()">Pay Now</button>
+    </div>
+</div>
+
+<!-- Review Form Popup -->
+<div class="overlay" id="reviewOverlay" style="display: none;">
+    <div class="popup" id="reviewPopup">
+        <h3>Add Your Review</h3>
+        <form id="reviewForm">
+            <div class="form-group">
+                <label for="reviewText">Your Review:</label>
+                <textarea id="reviewText" rows="4" required placeholder="Share your safari experience..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="reviewStars">Rating:</label>
+                <div class="stars-input">
+                    <span class="star" data-rating="1">★</span>
+                    <span class="star" data-rating="2">★</span>
+                    <span class="star" data-rating="3">★</span>
+                    <span class="star" data-rating="4">★</span>
+                    <span class="star" data-rating="5">★</span>
+                </div>
+                <input type="hidden" id="reviewStars" value="0">
+            </div>
+            <div class="form-actions">
+                <button type="button" onclick="closeReviewForm()" class="cancel-btn">Cancel</button>
+                <button type="submit" class="submit-btn">Submit Review</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- My Reviews Section -->
+<div class="my-reviews-section">
+    <h2>My Reviews</h2>
+    <div id="myReviewsContainer">
+        <!-- Reviews will be loaded here -->
+    </div>
+</div>
+
+<script>
+    let currentBooking = null;
+
+    // Load user's booking data on page load
+    window.onload = function() {
+        loadUserBooking();
+        loadAccountDetails();
+        loadMyReviews();
+    };
+
+    // Toggle edit mode for account details
+    function toggleEditMode() {
+        const contactField = document.getElementById('contact-field');
+        const emailField = document.getElementById('email-field');
+        
+        if (contactField.style.display === 'none') {
+            // Show edit fields
+            contactField.style.display = 'flex';
+            emailField.style.display = 'flex';
+            
+            // Add smooth animation
+            contactField.style.opacity = '0';
+            emailField.style.opacity = '0';
+            contactField.style.transform = 'translateY(-10px)';
+            emailField.style.transform = 'translateY(-10px)';
+            
+            setTimeout(() => {
+                contactField.style.transition = 'all 0.3s ease';
+                emailField.style.transition = 'all 0.3s ease';
+                contactField.style.opacity = '1';
+                emailField.style.opacity = '1';
+                contactField.style.transform = 'translateY(0)';
+                emailField.style.transform = 'translateY(0)';
+            }, 10);
+        } else {
+            // Hide edit fields
+            contactField.style.transition = 'all 0.3s ease';
+            emailField.style.transition = 'all 0.3s ease';
+            contactField.style.opacity = '0';
+            emailField.style.opacity = '0';
+            contactField.style.transform = 'translateY(-10px)';
+            emailField.style.transform = 'translateY(-10px)';
+            
+            setTimeout(() => {
+                contactField.style.display = 'none';
+                emailField.style.display = 'none';
+            }, 300);
+        }
+    }
+
+    async function loadUserBooking() {
+        try {
+            // Get user session info to get the correct user ID
+            const sessionResponse = await fetch('/api/session/user-info');
+            const userInfo = await sessionResponse.json();
+            
+            if (userInfo.userId) {
+                // Get all tours for this user
+                const response = await fetch(`/api/tours/user/${userInfo.userId}`);
+                const tours = await response.json();
+                
+                if (tours && tours.length > 0) {
+                    displayAllTours(tours);
+                } else {
+                    showNoBooking();
+                }
+            } else {
+                showNoBooking();
+            }
+        } catch (error) {
+            console.error('Error loading booking:', error);
+            showNoBooking();
+        }
+    }
+
+    function displayAllTours(tours) {
+        const tourSection = document.querySelector('.tour-section');
+        tourSection.innerHTML = `
+            <h1>Your Tours</h1>
+            <div id="toursContainer">
+                ${tours.map(tour => `
+                    <div class="tour-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #f9f9f9;">
+                        <h3>${tour.tourName}</h3>
+                        <p><strong>Date:</strong> ${new Date(tour.tourDate).toLocaleDateString()}</p>
+                        <p><strong>People:</strong> ${tour.numberOfPeople}</p>
+                        <p><strong>Status:</strong> <span class="status-${tour.status.toLowerCase()}">${tour.status}</span></p>
+                        <div class="special-instructions-wrapper">
+                            <label for="instructions-${tour.id}">Special Instructions:</label>
+                            <div class="special-instructions">
+                                <textarea id="instructions-${tour.id}" rows="3" readonly>${tour.specialInstructions || 'No special instructions'}</textarea>
+                                <button onclick="editInstructions(${tour.id})">Edit</button>
+                            </div>
+                        </div>
+                        ${tour.status === 'CONFIRMED' ? `
+                            <div class="assigned-info">
+                                <p><strong>Guide:</strong> <span id="guide-${tour.id}">Loading...</span></p>
+                                <p><strong>Driver:</strong> <span id="driver-${tour.id}">Loading...</span></p>
+                            </div>
+                        ` : ''}
+                        <div class="tour-actions">
+                            ${tour.status === 'PENDING' ? `
+                                <button class="cancel-btn" onclick="cancelTour(${tour.id})">Delete</button>
+                            ` : tour.status === 'CONFIRMED' ? `
+                                <button class="pay-btn" onclick="payNow(${tour.id})">Pay Now</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        // Load guide and driver info for confirmed tours
+        tours.forEach(tour => {
+            if (tour.status === 'CONFIRMED') {
+                if (tour.assignedGuideId) {
+                    loadGuideInfoForTour(tour.assignedGuideId, tour.id);
+                }
+                if (tour.assignedDriverId) {
+                    loadDriverInfoForTour(tour.assignedDriverId, tour.id);
+                }
+            }
+        });
+    }
+
+    function displayBooking(booking) {
+        document.getElementById('tourName').textContent = `Tour ${booking.tourId}`;
+        document.getElementById('tourDate').textContent = new Date(booking.tourDate).toLocaleDateString();
+        document.getElementById('numberOfPeople').textContent = booking.numberOfPeople;
+        document.getElementById('instructions').value = booking.specialInstructions || 'No special instructions';
+        
+        // Load guide and driver information
+        if (booking.guideId) {
+            loadGuideInfo(booking.guideId);
+        }
+        if (booking.driverId) {
+            loadDriverInfo(booking.driverId);
+        }
+    }
+
+    async function loadGuideInfo(guideId) {
+        try {
+            const response = await fetch(`/api/guides/${guideId}`);
+            const guide = await response.json();
+            document.getElementById('guideName').textContent = guide.name;
+            document.getElementById('guideDescription').textContent = 
+                `Professional wildlife guide with ${guide.experience || 'extensive'} years of experience. Languages: ${guide.language}`;
+            document.getElementById('guideInfo').style.display = 'block';
+        } catch (error) {
+            console.error('Error loading guide info:', error);
+        }
+    }
+
+    async function loadDriverInfo(driverId) {
+        try {
+            const response = await fetch(`/api/drivers/${driverId}`);
+            const driver = await response.json();
+            document.getElementById('driverName').textContent = driver.name;
+            document.getElementById('driverDescription').textContent = 
+                `Experienced safari driver with ${driver.experience || 'extensive'} years of expertise. License: ${driver.licenseNumber}`;
+            document.getElementById('driverInfo').style.display = 'block';
+        } catch (error) {
+            console.error('Error loading driver info:', error);
+        }
+    }
+
+    async function loadGuideInfoForTour(guideId, tourId) {
+        try {
+            const response = await fetch(`/api/guides/${guideId}`);
+            const guide = await response.json();
+            document.getElementById(`guide-${tourId}`).textContent = guide.username || 'Guide';
+        } catch (error) {
+            console.error('Error loading guide info:', error);
+        }
+    }
+
+    async function loadDriverInfoForTour(driverId, tourId) {
+        try {
+            const response = await fetch(`/api/drivers/${driverId}`);
+            const driver = await response.json();
+            document.getElementById(`driver-${tourId}`).textContent = driver.username || 'Driver';
+        } catch (error) {
+            console.error('Error loading driver info:', error);
+        }
+    }
+
+    function showNoBooking() {
+        document.querySelector('.tour-section h1').textContent = 'No approved tours found';
+        document.querySelector('.tour-section').innerHTML = `
+            <h1>No approved tours found</h1>
+            <p>You don't have any approved tours yet. <a href="/explore-tour">Browse tours</a> to book your next adventure!</p>
+        `;
+    }
+
+    function editInstructions(tourId) {
+        const textarea = document.getElementById(`instructions-${tourId}`);
+        const button = textarea.nextElementSibling;
+        
+        if (textarea.readOnly) {
+            textarea.readOnly = false;
+            textarea.focus();
+            button.innerText = "Save";
+            button.style.background = "#4CAF50";
+        } else {
+            textarea.readOnly = true;
+            button.innerText = "Edit";
+            button.style.background = "#2196F3";
+            // Save instructions to backend
+            updateInstructions(tourId, textarea.value);
+        }
+    }
+
+    async function updateInstructions(tourId, instructions) {
+        try {
+            const response = await fetch(`/api/tours/${tourId}/instructions`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ specialInstructions: instructions })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    // Show success feedback
+                    const button = document.getElementById(`instructions-${tourId}`).nextElementSibling;
+                    const originalText = button.innerText;
+                    button.innerText = "Saved!";
+                    button.style.background = "#4CAF50";
+                    setTimeout(() => {
+                        button.innerText = originalText;
+                        button.style.background = "#2196F3";
+                    }, 2000);
+                } else {
+                    alert('Failed to update instructions: ' + result.message);
+                }
+            } else {
+                alert('Failed to update instructions');
+            }
+        } catch (error) {
+            console.error('Error updating instructions:', error);
+            alert('Error updating instructions');
+        }
+    }
+
+    function cancelTour() {
+        if (confirm('Are you sure you want to cancel this tour?')) {
+            if (currentBooking) {
+                cancelBooking(currentBooking.id);
+            }
+        }
+    }
+
+    async function cancelBooking(bookingId) {
+        try {
+            const response = await fetch(`/api/bookings/${bookingId}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                alert('Tour cancelled successfully');
+                window.location.href = 'exploretour.html';
+            } else {
+                alert('Failed to cancel tour');
+            }
+        } catch (error) {
+            console.error('Error cancelling booking:', error);
+            alert('Error cancelling tour');
+        }
+    }
+
+    function payNow(tourId) {
+        alert(`Payment for tour ${tourId} would be processed here. This is a demo.`);
+    }
+
+    async function cancelTour(tourId) {
+        if (confirm('Are you sure you want to cancel this tour?')) {
+            try {
+                const response = await fetch(`/api/tours/${tourId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('Tour cancelled successfully');
+                    loadUserBooking(); // Reload the tours
+                } else {
+                    alert('Failed to cancel tour');
+                }
+            } catch (error) {
+                console.error('Error cancelling tour:', error);
+                alert('Error cancelling tour');
+            }
+        }
+    }
+
+    // Account Management Functions
+    async function loadAccountDetails() {
+        try {
+            const sessionResponse = await fetch('/api/session/user-info');
+            const userInfo = await sessionResponse.json();
+            
+            if (userInfo.userId) {
+                const response = await fetch(`/api/users/${userInfo.userId}`);
+                const user = await response.json();
+                
+                document.getElementById('account-username').textContent = user.username;
+                document.getElementById('account-contact').value = user.contactNumber || '';
+                document.getElementById('account-email').value = user.email || '';
+            }
+        } catch (error) {
+            console.error('Error loading account details:', error);
+        }
+    }
+
+    function editField(fieldType) {
+        const input = document.getElementById(`account-${fieldType}`);
+        const button = input.nextElementSibling;
+        
+        if (input.readOnly) {
+            input.readOnly = false;
+            input.focus();
+            button.innerText = "Save";
+            button.className = "edit-btn save-btn";
+            button.onclick = () => saveField(fieldType);
+        } else {
+            input.readOnly = true;
+            button.innerText = "Edit";
+            button.className = "edit-btn";
+            button.onclick = () => editField(fieldType);
+        }
+    }
+
+    async function saveField(fieldType) {
+        try {
+            const input = document.getElementById(`account-${fieldType}`);
+            const value = input.value;
+            const fieldName = fieldType === 'contact' ? 'contactNumber' : 'email';
+            
+            const sessionResponse = await fetch('/api/session/user-info');
+            const userInfo = await sessionResponse.json();
+            
+            const response = await fetch(`/api/users/${userInfo.userId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ [fieldName]: value })
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    const button = input.nextElementSibling;
+                    const originalText = button.innerText;
+                    button.innerText = "Saved!";
+                    button.className = "edit-btn save-btn";
+                    setTimeout(() => {
+                        button.innerText = "Edit";
+                        button.className = "edit-btn";
+                        button.onclick = () => editField(fieldType);
+                    }, 2000);
+                } else {
+                    alert('Failed to update ' + fieldType + ': ' + result.message);
+                }
+            } else {
+                alert('Failed to update ' + fieldType);
+            }
+        } catch (error) {
+            console.error('Error updating ' + fieldType + ':', error);
+            alert('Error updating ' + fieldType);
+        }
+    }
+
+    async function deleteAccount() {
+        if (confirm('Are you sure you want to delete your account? This action cannot be undone and will delete all your tours and data.')) {
+            if (confirm('This will permanently delete your account and all associated data. Are you absolutely sure?')) {
+                try {
+                    const sessionResponse = await fetch('/api/session/user-info');
+                    const userInfo = await sessionResponse.json();
+                    
+                    const response = await fetch(`/api/users/${userInfo.userId}`, {
+                        method: 'DELETE'
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            alert('Account deleted successfully. You will be redirected to the home page.');
+                            // Clear all storage
+                            sessionStorage.clear();
+                            localStorage.clear();
+                            // Redirect to home
+                            window.location.href = '/home';
+                        } else {
+                            alert('Failed to delete account: ' + result.message);
+                        }
+                    } else {
+                        alert('Failed to delete account');
+                    }
+                } catch (error) {
+                    console.error('Error deleting account:', error);
+                    alert('Error deleting account');
+                }
+            }
+        }
+    }
+
+    // Review Form Functions
+    function showAddReviewForm() {
+        document.getElementById('reviewOverlay').style.display = 'block';
+        document.getElementById('reviewForm').reset();
+        document.getElementById('reviewStars').value = '0';
+        updateStars(0);
+    }
+
+    function closeReviewForm() {
+        document.getElementById('reviewOverlay').style.display = 'none';
+    }
+
+    function updateStars(rating) {
+        const stars = document.querySelectorAll('.stars-input .star');
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    // Initialize star rating functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const stars = document.querySelectorAll('.stars-input .star');
+        stars.forEach((star, index) => {
+            star.addEventListener('click', function() {
+                const rating = index + 1;
+                document.getElementById('reviewStars').value = rating;
+                updateStars(rating);
+            });
+        });
+
+        // Form submission
+        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            submitReview();
+        });
+    });
+
+    async function submitReview() {
+        try {
+            // Get current user info to use their username as the review name
+            const sessionResponse = await fetch('/api/session/user-info');
+            const userInfo = await sessionResponse.json();
+            
+            if (!userInfo.userId) {
+                alert('Please log in to submit a review');
+                return;
+            }
+            
+            // Get user details to get the username
+            const userResponse = await fetch(`/api/users/${userInfo.userId}`);
+            const user = await userResponse.json();
+            const userName = user.username;
+            
+            const review = document.getElementById('reviewText').value;
+            const stars = parseInt(document.getElementById('reviewStars').value);
+
+            if (stars === 0) {
+                alert('Please select a star rating');
+                return;
+            }
+
+            const reviewData = {
+                name: userName, // Use the logged-in user's username
+                review: review,
+                stars: stars
+            };
+
+            const response = await fetch('/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reviewData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    alert('Review submitted successfully!');
+                    closeReviewForm();
+                    loadMyReviews(); // Reload user's reviews
+                } else {
+                    alert('Failed to submit review: ' + result.message);
+                }
+            } else {
+                alert('Failed to submit review');
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            alert('Error submitting review');
+        }
+    }
+
+    // Load user's reviews
+    async function loadMyReviews() {
+        try {
+            // Get current user info
+            const sessionResponse = await fetch('/api/session/user-info');
+            const userInfo = await sessionResponse.json();
+            
+            if (!userInfo.userId) {
+                document.getElementById('myReviewsContainer').innerHTML = '<div class="no-my-reviews">Please log in to view your reviews.</div>';
+                return;
+            }
+            
+            // Get user details to get the name
+            const userResponse = await fetch(`/api/users/${userInfo.userId}`);
+            const user = await userResponse.json();
+            const userName = user.username; // Use username as the name for reviews
+            
+            // Get all reviews (including pending ones)
+            const response = await fetch('/api/reviews/admin/all');
+            const allReviews = await response.json();
+            
+            // Filter reviews by the current user's name
+            const userReviews = allReviews.filter(review => review.name === userName);
+            
+            const container = document.getElementById('myReviewsContainer');
+            
+            if (userReviews && userReviews.length > 0) {
+                container.innerHTML = userReviews.map(review => `
+                    <div class="my-review-card" id="review-${review.id}">
+                        <h4>${review.name}</h4>
+                        <div class="review-content">
+                            <div class="review-stars" id="stars-${review.id}">${'★'.repeat(review.stars)}${'☆'.repeat(5 - review.stars)}</div>
+                            <div class="review-text" id="text-${review.id}">${review.review}</div>
+                        </div>
+                        <div class="review-date">${new Date(review.createdAt).toLocaleDateString()}</div>
+                        <div class="review-status" style="margin: 5px 0; font-size: 12px; color: #666;">
+                            Status: <span style="color: ${review.status === 'APPROVED' ? '#4CAF50' : review.status === 'PENDING' ? '#ff9800' : '#f44336'}; font-weight: bold;">${review.status}</span>
+                        </div>
+                        <div class="review-actions">
+                            <button class="edit-btn" onclick="editReview(${review.id}, '${review.name.replace(/'/g, "\\'")}', '${review.review.replace(/'/g, "\\'")}', ${review.stars})">Edit</button>
+                            <button class="delete-btn" onclick="deleteReview(${review.id})">Delete</button>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                container.innerHTML = '<div class="no-my-reviews">You haven\'t submitted any reviews yet.</div>';
+            }
+        } catch (error) {
+            console.error('Error loading reviews:', error);
+            document.getElementById('myReviewsContainer').innerHTML = '<div class="no-my-reviews">Error loading reviews.</div>';
+        }
+    }
+
+    // Edit review functionality
+    function editReview(reviewId, currentName, currentReview, currentStars) {
+        const reviewCard = document.getElementById(`review-${reviewId}`);
+        const starsElement = document.getElementById(`stars-${reviewId}`);
+        const textElement = document.getElementById(`text-${reviewId}`);
+        const actionsElement = reviewCard.querySelector('.review-actions');
+        
+        // Store original content for cancel functionality
+        const originalContent = {
+            stars: currentStars,
+            text: currentReview
+        };
+        
+        // Replace stars with editable version
+        starsElement.innerHTML = `
+            <div class="stars-editable" id="editable-stars-${reviewId}">
+                <span class="star ${currentStars >= 1 ? 'active' : ''}" data-rating="1">★</span>
+                <span class="star ${currentStars >= 2 ? 'active' : ''}" data-rating="2">★</span>
+                <span class="star ${currentStars >= 3 ? 'active' : ''}" data-rating="3">★</span>
+                <span class="star ${currentStars >= 4 ? 'active' : ''}" data-rating="4">★</span>
+                <span class="star ${currentStars >= 5 ? 'active' : ''}" data-rating="5">★</span>
+            </div>
+        `;
+        
+        // Replace text with editable textarea
+        textElement.innerHTML = `<textarea class="review-text editable" id="editable-text-${reviewId}">${currentReview}</textarea>`;
+        
+        // Update action buttons
+        actionsElement.innerHTML = `
+            <button class="save-btn" onclick="saveReview(${reviewId}, '${currentName.replace(/'/g, "\\'")}')">Save</button>
+            <button class="cancel-edit-btn" onclick="cancelEdit(${reviewId}, ${originalContent.stars}, '${originalContent.text.replace(/'/g, "\\'")}')">Cancel</button>
+        `;
+        
+        // Add star rating functionality
+        const editableStars = document.getElementById(`editable-stars-${reviewId}`);
+        const stars = editableStars.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            star.addEventListener('click', function() {
+                const rating = index + 1;
+                updateEditableStars(reviewId, rating);
+            });
+        });
+        
+        // Focus on textarea
+        document.getElementById(`editable-text-${reviewId}`).focus();
+    }
+    
+    function updateEditableStars(reviewId, rating) {
+        const stars = document.querySelectorAll(`#editable-stars-${reviewId} .star`);
+        stars.forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+    
+    async function saveReview(reviewId, name) {
+        try {
+            const textElement = document.getElementById(`editable-text-${reviewId}`);
+            const starsElement = document.getElementById(`editable-stars-${reviewId}`);
+            
+            const newText = textElement.value.trim();
+            const newStars = starsElement.querySelectorAll('.star.active').length;
+            
+            if (newText === '') {
+                alert('Review text cannot be empty');
+                return;
+            }
+            
+            if (newStars === 0) {
+                alert('Please select a star rating');
+                return;
+            }
+            
+            const reviewData = {
+                name: name,
+                review: newText,
+                stars: newStars
+            };
+            
+            const response = await fetch(`/api/reviews/${reviewId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reviewData)
+            });
+            
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    alert('Review updated successfully!');
+                    loadMyReviews(); // Reload reviews to show updated content
+                } else {
+                    alert('Failed to update review: ' + result.message);
+                }
+            } else {
+                alert('Failed to update review');
+            }
+        } catch (error) {
+            console.error('Error updating review:', error);
+            alert('Error updating review');
+        }
+    }
+    
+    function cancelEdit(reviewId, originalStars, originalText) {
+        const starsElement = document.getElementById(`stars-${reviewId}`);
+        const textElement = document.getElementById(`text-${reviewId}`);
+        const actionsElement = document.getElementById(`review-${reviewId}`).querySelector('.review-actions');
+        
+        // Restore original stars
+        starsElement.innerHTML = `${'★'.repeat(originalStars)}${'☆'.repeat(5 - originalStars)}`;
+        
+        // Restore original text
+        textElement.innerHTML = originalText;
+        
+        // Restore original action buttons
+        actionsElement.innerHTML = `
+            <button class="edit-btn" onclick="editReview(${reviewId}, '${document.getElementById(`review-${reviewId}`).querySelector('h4').textContent.replace(/'/g, "\\'")}', '${originalText.replace(/'/g, "\\'")}', ${originalStars})">Edit</button>
+            <button class="delete-btn" onclick="deleteReview(${reviewId})">Delete</button>
+        `;
+    }
+    
+    async function deleteReview(reviewId) {
+        if (confirm('Are you sure you want to delete this review? This action cannot be undone.')) {
+            try {
+                const response = await fetch(`/api/reviews/${reviewId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success) {
+                        alert('Review deleted successfully!');
+                        loadMyReviews(); // Reload reviews to remove deleted review
+                    } else {
+                        alert('Failed to delete review: ' + result.message);
+                    }
+                } else {
+                    alert('Failed to delete review');
+                }
+            } catch (error) {
+                console.error('Error deleting review:', error);
+                alert('Error deleting review');
+            }
+        }
+    }
+</script>
+</body>
+</html>

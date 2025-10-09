@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour System Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .button.danger {
+            background: #f44336;
+        }
+        .button.danger:hover {
+            background: #da190b;
+        }
+        .result {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status-available {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .status-accepted {
+            color: #2196F3;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tour System Test Dashboard</h1>
+        
+        <div class="section">
+            <h2>Tour Management</h2>
+            <button class="button" onclick="createSampleTour()">Create Sample Tour</button>
+            <button class="button" onclick="loadAllTours()">Load All Tours</button>
+            <div id="tourResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Driver Tours</h2>
+            <button class="button" onclick="loadDriverTours()">Load All Driver Tours</button>
+            <button class="button" onclick="loadDriverToursForDriver(1)">Load Driver 1 Tours</button>
+            <button class="button" onclick="loadDriverToursForDriver(2)">Load Driver 2 Tours</button>
+            <div id="driverResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Guide Tours</h2>
+            <button class="button" onclick="loadGuideTours()">Load All Guide Tours</button>
+            <button class="button" onclick="loadGuideToursForGuide(1)">Load Guide 1 Tours</button>
+            <button class="button" onclick="loadGuideToursForGuide(2)">Load Guide 2 Tours</button>
+            <div id="guideResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Test Tour Acceptance</h2>
+            <button class="button" onclick="testDriverAcceptance()">Test Driver 1 Accepts Tour</button>
+            <button class="button" onclick="testGuideAcceptance()">Test Guide 1 Accepts Tour</button>
+            <div id="acceptanceResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function createSampleTour() {
+            try {
+                const response = await fetch('/api/test-tours/create-sample-tour', {
+                    method: 'POST'
+                });
+                const result = await response.json();
+                showResult('tourResult', result, result.success);
+            } catch (error) {
+                showResult('tourResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function loadAllTours() {
+            try {
+                const response = await fetch('/api/tours/all');
+                const tours = await response.json();
+                showResult('tourResult', { success: true, data: tours, count: tours.length }, true);
+            } catch (error) {
+                showResult('tourResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function loadDriverTours() {
+            try {
+                const response = await fetch('/api/test-tours/driver-tours/all');
+                const tours = await response.json();
+                showResult('driverResult', { success: true, data: tours, count: tours.length }, true);
+            } catch (error) {
+                showResult('driverResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function loadDriverToursForDriver(driverId) {
+            try {
+                const response = await fetch(`/api/test-tours/driver-tours/driver/${driverId}`);
+                const tours = await response.json();
+                showResult('driverResult', { success: true, data: tours, count: tours.length, driverId: driverId }, true);
+            } catch (error) {
+                showResult('driverResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function loadGuideTours() {
+            try {
+                const response = await fetch('/api/test-tours/guide-tours/all');
+                const tours = await response.json();
+                showResult('guideResult', { success: true, data: tours, count: tours.length }, true);
+            } catch (error) {
+                showResult('guideResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function loadGuideToursForGuide(guideId) {
+            try {
+                const response = await fetch(`/api/test-tours/guide-tours/guide/${guideId}`);
+                const tours = await response.json();
+                showResult('guideResult', { success: true, data: tours, count: tours.length, guideId: guideId }, true);
+            } catch (error) {
+                showResult('guideResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function testDriverAcceptance() {
+            try {
+                // First create a tour
+                await createSampleTour();
+                
+                // Wait a moment for tour creation
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Test driver acceptance
+                const response = await fetch('/api/driver-tours/accept', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        driverId: 1,
+                        tourId: 1 // Assuming tour ID 1
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('acceptanceResult', result, result.success);
+            } catch (error) {
+                showResult('acceptanceResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function testGuideAcceptance() {
+            try {
+                // First create a tour
+                await createSampleTour();
+                
+                // Wait a moment for tour creation
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Test guide acceptance
+                const response = await fetch('/api/guide-tours/accept', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        guideId: 1,
+                        tourId: 1 // Assuming tour ID 1
+                    })
+                });
+                
+                const result = await response.json();
+                showResult('acceptanceResult', result, result.success);
+            } catch (error) {
+                showResult('acceptanceResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        function showResult(elementId, data, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = isSuccess ? 'result' : 'result error';
+            
+            let html = `<strong>${isSuccess ? 'Success' : 'Error'}:</strong><br>`;
+            
+            if (data.message) {
+                html += `Message: ${data.message}<br>`;
+            }
+            
+            if (data.count !== undefined) {
+                html += `Count: ${data.count}<br>`;
+            }
+            
+            if (data.data && Array.isArray(data.data)) {
+                html += `<table><tr><th>ID</th><th>Driver/Guide ID</th><th>Tour ID</th><th>Tour Name</th><th>Status</th><th>Date</th></tr>`;
+                data.data.forEach(item => {
+                    const statusClass = item.status === 'AVAILABLE' ? 'status-available' : 'status-accepted';
+                    html += `<tr>
+                        <td>${item.id || 'N/A'}</td>
+                        <td>${item.driverId || item.guideId || 'N/A'}</td>
+                        <td>${item.tourId || 'N/A'}</td>
+                        <td>${item.tourName || 'N/A'}</td>
+                        <td class="${statusClass}">${item.status || 'N/A'}</td>
+                        <td>${item.tourDate || 'N/A'}</td>
+                    </tr>`;
+                });
+                html += `</table>`;
+            }
+            
+            element.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
+
+
+
+
