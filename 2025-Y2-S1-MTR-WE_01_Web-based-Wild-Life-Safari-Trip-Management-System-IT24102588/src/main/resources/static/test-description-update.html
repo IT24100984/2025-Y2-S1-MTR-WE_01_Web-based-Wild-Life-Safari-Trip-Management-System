@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Description Update</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background: #45a049;
+        }
+        .button.danger {
+            background: #f44336;
+        }
+        .button.danger:hover {
+            background: #da190b;
+        }
+        .result {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #4CAF50;
+        }
+        .error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Test Description Update System</h1>
+        
+        <div class="section">
+            <h2>Test Driver Description Update</h2>
+            <label for="driverId">Driver ID:</label>
+            <input type="number" id="driverId" value="1" placeholder="Enter driver ID">
+            
+            <label for="newDescription">New Description:</label>
+            <textarea id="newDescription" placeholder="Enter new description">This is a test description update.</textarea>
+            
+            <button class="button" onclick="testDriverUpdate()">Test Driver Description Update</button>
+            <button class="button" onclick="getDriverInfo()">Get Driver Info</button>
+            <div id="driverResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Test Guide Description Update</h2>
+            <label for="guideId">Guide ID:</label>
+            <input type="number" id="guideId" value="1" placeholder="Enter guide ID">
+            
+            <label for="newGuideDescription">New Description:</label>
+            <textarea id="newGuideDescription" placeholder="Enter new description">This is a test guide description update.</textarea>
+            
+            <button class="button" onclick="testGuideUpdate()">Test Guide Description Update</button>
+            <button class="button" onclick="getGuideInfo()">Get Guide Info</button>
+            <div id="guideResult" class="result" style="display: none;"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Test Session Info</h2>
+            <button class="button" onclick="getSessionInfo()">Get Session Info</button>
+            <div id="sessionResult" class="result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testDriverUpdate() {
+            const driverId = document.getElementById('driverId').value;
+            const newDescription = document.getElementById('newDescription').value;
+            
+            try {
+                console.log('Testing driver update for ID:', driverId);
+                console.log('New description:', newDescription);
+                
+                const response = await fetch(`/api/drivers/${driverId}/description`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ description: newDescription })
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                showResult('driverResult', data, data.success);
+            } catch (error) {
+                console.error('Error testing driver update:', error);
+                showResult('driverResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function testGuideUpdate() {
+            const guideId = document.getElementById('guideId').value;
+            const newDescription = document.getElementById('newGuideDescription').value;
+            
+            try {
+                console.log('Testing guide update for ID:', guideId);
+                console.log('New description:', newDescription);
+                
+                const response = await fetch(`/api/guides/${guideId}/description`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ description: newDescription })
+                });
+                
+                console.log('Response status:', response.status);
+                const data = await response.json();
+                console.log('Response data:', data);
+                
+                showResult('guideResult', data, data.success);
+            } catch (error) {
+                console.error('Error testing guide update:', error);
+                showResult('guideResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function getDriverInfo() {
+            const driverId = document.getElementById('driverId').value;
+            
+            try {
+                const response = await fetch(`/api/drivers/test/${driverId}`);
+                const data = await response.json();
+                showResult('driverResult', data, data.success);
+            } catch (error) {
+                console.error('Error getting driver info:', error);
+                showResult('driverResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function getGuideInfo() {
+            const guideId = document.getElementById('guideId').value;
+            
+            try {
+                const response = await fetch(`/api/guides/${guideId}`);
+                const data = await response.json();
+                showResult('guideResult', data, data.success);
+            } catch (error) {
+                console.error('Error getting guide info:', error);
+                showResult('guideResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        async function getSessionInfo() {
+            try {
+                const response = await fetch('/api/session/user-info');
+                const data = await response.json();
+                showResult('sessionResult', data, true);
+            } catch (error) {
+                console.error('Error getting session info:', error);
+                showResult('sessionResult', { success: false, message: error.message }, false);
+            }
+        }
+        
+        function showResult(elementId, data, isSuccess) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = isSuccess ? 'result' : 'result error';
+            
+            let html = `<strong>${isSuccess ? 'Success' : 'Error'}:</strong><br>`;
+            
+            if (data.message) {
+                html += `Message: ${data.message}<br>`;
+            }
+            
+            if (data.driverId) {
+                html += `Driver ID: ${data.driverId}<br>`;
+            }
+            
+            if (data.description) {
+                html += `Description: ${data.description}<br>`;
+            }
+            
+            if (data.userId) {
+                html += `User ID: ${data.userId}<br>`;
+            }
+            
+            if (data.driverId) {
+                html += `Driver ID: ${data.driverId}<br>`;
+            }
+            
+            if (data.guideId) {
+                html += `Guide ID: ${data.guideId}<br>`;
+            }
+            
+            element.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
+
+
+
+

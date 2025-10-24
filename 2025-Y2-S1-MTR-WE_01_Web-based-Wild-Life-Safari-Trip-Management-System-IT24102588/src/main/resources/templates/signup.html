@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Safari Tours</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: url('/static/signup_bg.jpg') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .navbar .back {
+            font-size: 20px;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .navbar .back:hover {
+            color: #4CAF50;
+        }
+
+        /* Main content container */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Overlay for popup */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .overlay.show {
+            display: flex !important;
+        }
+
+        .signup-box {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px 40px;
+            border-radius: 15px;
+            text-align: center;
+            width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .signup-box h2 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 28px;
+        }
+
+        .signup-box input[type="text"],
+        .signup-box input[type="password"],
+        .signup-box input[type="email"],
+        .signup-box input[type="number"],
+        .signup-box select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .signup-box input:focus,
+        .signup-box select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .role-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            gap: 15px;
+        }
+
+        .role {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .role button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            overflow: hidden;
+            padding: 0;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            transition: all 0.3s;
+        }
+
+        .role button:hover {
+            transform: scale(1.05);
+            border-color: #4CAF50;
+        }
+
+        .role button.selected {
+            border-color: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .role button img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .role span {
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .popup-form {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 450px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .popup-form h3 {
+            margin-bottom: 25px;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .popup-form .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .popup-form .close-btn:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 15px;
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #2e7d32;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .signup-box {
+                width: 90%;
+                padding: 20px;
+            }
+
+            .popup-form {
+                width: 90%;
+                padding: 30px;
+            }
+
+            .role-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<div class="navbar">
+    <a href="/home" class="back">← Home</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+<div class="signup-box">
+    <h2>Join Safari Tours</h2>
+
+    <form id="basicSignupForm">
+        <input type="text" id="username" placeholder="Username" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+    </form>
+
+    <p style="margin: 15px 0; font-size: 14px; color: #666;">
+        Already have an account?
+        <a href="/templates/login.html" style="color: #4CAF50; text-decoration: none;">Log in</a>
+    </p>
+
+    <div class="role-buttons">
+        <div class="role">
+            <button onclick="selectRole('TOURIST')" id="touristBtn">
+                <img src="/static/tourist-icon.png" alt="Tourist">
+            </button>
+            <span>I am Tourist</span>
+        </div>
+        <div class="role">
+            <button onclick="selectRole('GUIDE')" id="guideBtn">
+                <img src="/static/guide-icon.png" alt="Guide">
+            </button>
+            <span>I am a Guide</span>
+        </div>
+        <div class="role">
+            <button onclick="selectRole('DRIVER')" id="driverBtn">
+                <img src="/static/driver-icon.png" alt="Driver">
+            </button>
+            <span>I am a Driver</span>
+        </div>
+    </div>
+</div>
+
+<!-- Popup Forms -->
+<div class="overlay" id="popupOverlay">
+    <div class="popup-form">
+        <button class="close-btn" onclick="closePopup()">&times;</button>
+        <h3 id="popupTitle">Complete Your Profile</h3>
+
+        <form id="profileForm">
+            <div class="form-group">
+                <label for="firstName">First Name *</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last Name *</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="contactNumber">Contact Number *</label>
+                <input type="text" id="contactNumber" name="contactNumber" required>
+            </div>
+
+            <div class="form-group">
+                <label for="nic">NIC *</label>
+                <input type="text" id="nic" name="nic" required>
+            </div>
+
+            <!-- Tourist specific fields -->
+            <div class="form-group" id="nationalityGroup" style="display: none;">
+                <label for="nationality">Nationality *</label>
+                <input type="text" id="nationality" name="nationality">
+            </div>
+
+            <!-- Guide/Driver specific fields -->
+            <div class="form-group" id="experienceGroup" style="display: none;">
+                <label for="experience">Years of Experience *</label>
+                <input type="number" id="experience" name="experience" min="0">
+            </div>
+
+            <div class="form-group" id="languageGroup" style="display: none;">
+                <label for="language">Languages (comma separated) *</label>
+                <input type="text" id="language" name="language" placeholder="e.g., English, Sinhala, Tamil">
+            </div>
+
+            <!-- Driver specific fields -->
+            <div class="form-group" id="licenseGroup" style="display: none;">
+                <label for="licenseNumber">License Number *</label>
+                <input type="text" id="licenseNumber" name="licenseNumber">
+            </div>
+
+            <div class="form-group" id="vehicleGroup" style="display: none;">
+                <label for="vehicleType">Vehicle Type *</label>
+                <select id="vehicleType" name="vehicleType">
+                    <option value="">Select Vehicle Type</option>
+                    <option value="CAR">Car</option>
+                    <option value="VAN">Van</option>
+                    <option value="BUS">Bus</option>
+                    <option value="JEEP">Jeep</option>
+                </select>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Complete Registration</button>
+            <div class="error-message" id="errorMessage"></div>
+            <div class="success-message" id="successMessage"></div>
+        </form>
+
+        <a href="#" class="back-btn" onclick="closePopup()">Back to Role Selection</a>
+    </div>
+</div>
+</div>
+
+<script>
+    let selectedRole = null;
+    let basicFormData = {};
+
+    function selectRole(role) {
+        // Validate basic form first
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+
+        if (!username || !password || !confirmPassword) {
+            showMainError('Please fill in all basic information first.');
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            showMainError('Passwords do not match.');
+            return;
+        }
+
+        // Store basic form data
+        basicFormData = {
+            username: username,
+            password: password,
+            confirmPassword: confirmPassword
+        };
+
+        selectedRole = role;
+
+        // Update UI
+        document.querySelectorAll('.role button').forEach(btn => btn.classList.remove('selected'));
+        const buttonId = role.toLowerCase() + 'Btn';
+        const button = document.getElementById(buttonId);
+        if (button) {
+            button.classList.add('selected');
+        }
+
+        // Show appropriate fields based on role
+        showRoleSpecificFields(role);
+
+        // Show popup
+        const popupOverlay = document.getElementById('popupOverlay');
+        if (popupOverlay) {
+            popupOverlay.classList.add('show');
+        }
+    }
+
+    function showRoleSpecificFields(role) {
+        // Hide all role-specific fields first
+        document.getElementById('nationalityGroup').style.display = 'none';
+        document.getElementById('experienceGroup').style.display = 'none';
+        document.getElementById('languageGroup').style.display = 'none';
+        document.getElementById('licenseGroup').style.display = 'none';
+        document.getElementById('vehicleGroup').style.display = 'none';
+
+        // Reset required attributes
+        document.getElementById('nationality').required = false;
+        document.getElementById('experience').required = false;
+        document.getElementById('language').required = false;
+        document.getElementById('licenseNumber').required = false;
+        document.getElementById('vehicleType').required = false;
+
+        // Show fields based on role
+        if (role === 'TOURIST') {
+            document.getElementById('nationalityGroup').style.display = 'block';
+            document.getElementById('nationality').required = true;
+            document.getElementById('popupTitle').textContent = 'Tourist Profile Details';
+        } else if (role === 'GUIDE') {
+            document.getElementById('experienceGroup').style.display = 'block';
+            document.getElementById('languageGroup').style.display = 'block';
+            document.getElementById('experience').required = true;
+            document.getElementById('language').required = true;
+            document.getElementById('popupTitle').textContent = 'Guide Profile Details';
+        } else if (role === 'DRIVER') {
+            document.getElementById('experienceGroup').style.display = 'block';
+            document.getElementById('languageGroup').style.display = 'block';
+            document.getElementById('licenseGroup').style.display = 'block';
+            document.getElementById('vehicleGroup').style.display = 'block';
+            document.getElementById('experience').required = true;
+            document.getElementById('language').required = true;
+            document.getElementById('licenseNumber').required = true;
+            document.getElementById('vehicleType').required = true;
+            document.getElementById('popupTitle').textContent = 'Driver Profile Details';
+        }
+    }
+
+    function closePopup() {
+        document.getElementById('popupOverlay').classList.remove('show');
+        document.getElementById('profileForm').reset();
+        hideMessages();
+    }
+
+    function showMainError(message) {
+        // Show error in main form area
+        const mainForm = document.getElementById('basicSignupForm');
+        let errorDiv = document.getElementById('mainError');
+
+        if (!errorDiv) {
+            errorDiv = document.createElement('div');
+            errorDiv.id = 'mainError';
+            errorDiv.style.cssText = 'color: #d32f2f; font-size: 14px; margin-top: 10px; padding: 10px; background: #ffebee; border-radius: 4px;';
+            mainForm.appendChild(errorDiv);
+        }
+
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    function showPopupError(message) {
+        const errorDiv = document.getElementById('errorMessage');
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    function showSuccess(message) {
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = message;
+        successDiv.style.display = 'block';
+        setTimeout(() => {
+            successDiv.style.display = 'none';
+        }, 5000);
+    }
+
+    function hideMessages() {
+        document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+    }
+
+    // Handle profile form submission
+    document.getElementById('profileForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const form = this;
+        const submitBtn = document.getElementById('submitBtn');
+
+        hideMessages();
+
+        if (!form.checkValidity()) {
+            showPopupError('Please fill in all required fields.');
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating Account...';
+
+        try {
+            // Collect form data
+            const formData = {
+                ...basicFormData,
+                role: selectedRole,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                contactNumber: document.getElementById('contactNumber').value,
+                nic: document.getElementById('nic').value
+            };
+
+            // Add role-specific fields
+            if (selectedRole === 'TOURIST') {
+                formData.nationality = document.getElementById('nationality').value;
+            } else if (selectedRole === 'GUIDE' || selectedRole === 'DRIVER') {
+                formData.experience = parseInt(document.getElementById('experience').value);
+                formData.language = document.getElementById('language').value;
+
+                if (selectedRole === 'DRIVER') {
+                    formData.licenseNumber = document.getElementById('licenseNumber').value;
+                    formData.vehicleType = document.getElementById('vehicleType').value;
+                }
+            }
+
+            // Submit to backend
+            const response = await fetch('/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                // Redirect based on user role
+                let redirectUrl = '';
+                if (selectedRole === 'DRIVER') {
+                    showSuccess('Registration successful! Redirecting to driver dashboard...');
+                    redirectUrl = '/driver-dashboard';
+                } else if (selectedRole === 'GUIDE') {
+                    showSuccess('Registration successful! Redirecting to guide dashboard...');
+                    redirectUrl = '/guide-dashboard';
+                } else {
+                    showSuccess('Registration successful! Redirecting to login...');
+                    redirectUrl = '/login';
+                }
+                
+                setTimeout(() => {
+                    window.location.href = redirectUrl;
+                }, 2000);
+            } else {
+                showPopupError(result.message || 'Registration failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Registration error:', error);
+            showPopupError('An error occurred during registration. Please try again.');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Complete Registration';
+        }
+    });
+
+    // Close popup when clicking outside
+    document.getElementById('popupOverlay').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePopup();
+        }
+    });
+</script>
+</body>
+</html>
