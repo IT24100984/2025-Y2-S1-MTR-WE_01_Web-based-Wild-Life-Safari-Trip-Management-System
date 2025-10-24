@@ -1,0 +1,20 @@
+-- Check the role constraint to see what values are allowed
+SELECT 
+    CONSTRAINT_NAME,
+    CHECK_CLAUSE
+FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS 
+WHERE CONSTRAINT_NAME LIKE '%role%';
+
+-- Alternative query to check constraints on users table
+SELECT 
+    cc.CONSTRAINT_NAME,
+    cc.CHECK_CLAUSE
+FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS cc
+JOIN INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE ccu 
+    ON cc.CONSTRAINT_NAME = ccu.CONSTRAINT_NAME
+WHERE ccu.TABLE_NAME = 'users' 
+    AND ccu.COLUMN_NAME = 'role';
+
+
+
+

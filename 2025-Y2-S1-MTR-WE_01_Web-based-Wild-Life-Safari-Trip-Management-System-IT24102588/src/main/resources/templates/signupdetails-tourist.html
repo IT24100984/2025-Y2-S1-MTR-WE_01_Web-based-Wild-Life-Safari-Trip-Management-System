@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: url("login_bg.png.png") no-repeat center center/cover;
+      position: relative;
+    }
+
+    /* Blur overlay */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: inherit;
+      z-index: -1;
+    }
+
+    /* Popup box */
+    .profile-container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(5px);
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+      width: 350px;
+      text-align: center;
+      animation: popup 0.5s ease;
+    }
+
+    @keyframes popup {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .profile-container h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .profile-container input[type="text"],
+    .profile-container input[type="email"] {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      outline: none;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+
+    .profile-container button {
+      width: 100%;
+      padding: 12px;
+      margin: 15px 0 10px 0;
+      border-radius: 8px;
+      border: none;
+      background: #4CAF50;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .profile-container button:hover {
+      background: #45a049;
+    }
+
+    .profile-container a {
+      display: block;
+      margin-top: 10px;
+      text-decoration: none;
+      color: #4CAF50;
+      font-size: 14px;
+    }
+
+    .profile-container a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+<div class="profile-container">
+  <h2>Profile Details</h2>
+  <form id="signupForm">
+    <input type="text" id="firstName" name="firstName" placeholder="First Name" required>
+    <input type="text" id="lastName" name="lastName" placeholder="Last Name" required>
+    <input type="text" id="contactNumber" name="contactNumber" placeholder="Contact Number" required>
+    <input type="email" id="email" name="email" placeholder="E-mail" required>
+    <input type="text" id="nationality" name="nationality" placeholder="Nationality" required>
+    <button type="submit">Sign Up</button>
+  </form>
+  <div id="signupResult" style="display: none; margin-top: 10px; padding: 10px; border-radius: 4px;"></div>
+  <a href="login.html">Back to Login</a>
+</div>
+
+<script>
+document.getElementById('signupForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const signupData = JSON.parse(localStorage.getItem('signupData') || '{}');
+    const formData = {
+        username: signupData.username,
+        password: signupData.password,
+        role: 'tourist',
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        contactNumber: document.getElementById('contactNumber').value,
+        email: document.getElementById('email').value,
+        nationality: document.getElementById('nationality').value
+    };
+    
+    try {
+        const response = await fetch('/api/auth/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        const resultDiv = document.getElementById('signupResult');
+        resultDiv.style.display = 'block';
+        
+        if (result.success) {
+            resultDiv.style.backgroundColor = '#d4edda';
+            resultDiv.style.color = '#155724';
+            resultDiv.textContent = 'Account created successfully! Redirecting to login...';
+            localStorage.removeItem('signupData');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        } else {
+            resultDiv.style.backgroundColor = '#f8d7da';
+            resultDiv.style.color = '#721c24';
+            resultDiv.textContent = result.message;
+        }
+    } catch (error) {
+        const resultDiv = document.getElementById('signupResult');
+        resultDiv.style.display = 'block';
+        resultDiv.style.backgroundColor = '#f8d7da';
+        resultDiv.style.color = '#721c24';
+        resultDiv.textContent = 'Signup failed: ' + error.message;
+    }
+});
+</script>
+
+</body>
+</html>
