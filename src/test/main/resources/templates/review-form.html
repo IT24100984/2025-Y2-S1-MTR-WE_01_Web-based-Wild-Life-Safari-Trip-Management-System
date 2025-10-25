@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Review - Wildlife Safari</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .review-form-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #333;
+        }
+
+        .form-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .stars-input {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star.active {
+            color: #ffd700;
+        }
+
+        .star:hover {
+            color: #ffd700;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #f44336;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success-message {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="review-form-container">
+    <button class="close-btn" onclick="closeReviewForm()">&times;</button>
+
+    <h2 class="form-title">Share Your Experience</h2>
+
+    <form id="reviewForm">
+        <div class="form-group">
+            <label for="reviewName">Your Name *</label>
+            <input type="text" id="reviewName" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="reviewText">Your Review *</label>
+            <textarea id="reviewText" name="review" placeholder="Tell us about your safari experience..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Rating *</label>
+            <div class="stars-input">
+                <span class="star" data-rating="1">★</span>
+                <span class="star" data-rating="2">★</span>
+                <span class="star" data-rating="3">★</span>
+                <span class="star" data-rating="4">★</span>
+                <span class="star" data-rating="5">★</span>
+            </div>
+            <input type="hidden" id="reviewStars" name="stars" value="0">
+        </div>
+
+        <button type="submit" class="submit-btn">Submit Review</button>
+    </form>
+</div>
+
+<script>
+    // Star rating functionality
+    document.querySelectorAll('.star').forEach((star, index) => {
+        star.addEventListener('click', function() {
+            const rating = index + 1;
+            document.getElementById('reviewStars').value = rating;
+            updateStars(rating);
+        });
+    });
+
+    function updateStars(rating) {
+        document.querySelectorAll('.star').forEach((star, index) => {
+            if (index < rating) {
+                star.classList.add('active');
+            } else {
+                star.classList.remove('active');
+            }
+        });
+    }
+
+    // Form submission
+    document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        submitReview();
+    });
+
+    async function submitReview() {
+        try {
+            const name = document.getElementById('reviewName').value;
+            const review = document.getElementById('reviewText').value;
+            const stars = parseInt(document.getElementById('reviewStars').value);
+
+            if (stars === 0) {
+                alert('Please select a star rating');
+                return;
+            }
+
+            const reviewData = {
+                name: name,
+                review: review,
+                stars: stars
+            };
+
+            const response = await fetch('/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(reviewData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                if (result.success) {
+                    alert('Review submitted successfully! It will be reviewed before being published.');
+                    closeReviewForm();
+                } else {
+                    alert('Failed to submit review: ' + result.message);
+                }
+            } else {
+                alert('Failed to submit review');
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+            alert('Error submitting review');
+        }
+    }
+
+    function closeReviewForm() {
+        // This function should be implemented by the parent page
+        if (window.parent && window.parent.closeReviewForm) {
+            window.parent.closeReviewForm();
+        } else {
+            window.close();
+        }
+    }
+</script>
+</body>
+</html>
