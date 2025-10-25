@@ -1,6 +1,6 @@
-package com.safari.reviewmanagement.repository;
+package java.main.java.repository;
 
-import com.safari.reviewmanagement.model.Review;
+import java.main.java.model.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

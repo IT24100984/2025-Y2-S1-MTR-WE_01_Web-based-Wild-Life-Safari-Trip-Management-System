@@ -1,7 +1,7 @@
-package com.safari.reviewmanagement.service;
+package java.main.java.service;
 
-import com.safari.reviewmanagement.model.Review;
-import com.safari.reviewmanagement.repository.ReviewRepository;
+import java.main.java.model.Review;
+import java.main.java.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
-package com.safari.reviewmanagement.controller;
+package java.main.java.controller;
 
-import com.safari.reviewmanagement.model.Review;
-import com.safari.reviewmanagement.service.ReviewService;
+import java.main.java.model.Review;
+import java.main.java.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
